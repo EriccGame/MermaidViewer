@@ -887,7 +887,29 @@ function initPanzoom() {
     maxZoom: 8, minZoom: 0.1,
     bounds: false,
     zoomDoubleClickSpeed: 1,
+    // Zoom suave: factor muy pequeño por evento de scroll
+    zoomSpeed: 0.05,
+    // Suavizar con beforeWheel para normalizar deltas de trackpad vs rueda
+    beforeWheel: (e) => {
+      // Permitir zoom solo dentro del contenedor (sin modificar comportamiento fuera)
+      return false
+    },
   })
+
+  // Reemplazar el zoom de scroll con uno más suave y controlado
+  const container = document.getElementById('diagram-container')
+  container.addEventListener('wheel', (e) => {
+    e.preventDefault()
+    // Normalizar el delta (trackpad da valores pequeños, rueda da valores grandes)
+    const delta = e.deltaY
+    const normalized = Math.sign(delta) * Math.min(Math.abs(delta), 60)
+    // Factor de zoom muy gradual: 0.008 por unidad normalizada
+    const zoomFactor = 1 - normalized * 0.008
+    const rect = container.getBoundingClientRect()
+    const cx = e.clientX - rect.left
+    const cy = e.clientY - rect.top
+    if (panzoomInstance) panzoomInstance.smoothZoom(cx, cy, zoomFactor)
+  }, { passive: false })
 }
 
 function resetPanzoom() {
