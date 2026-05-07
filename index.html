@@ -884,7 +884,7 @@ function initPanzoom() {
   const scene = document.getElementById('diagram-scene')
   if (panzoomInstance) { try { panzoomInstance.dispose() } catch(e) {} }
   panzoomInstance = panzoom(scene, {
-    maxZoom: 8, minZoom: 0.1,
+    maxZoom: 30, minZoom: 0.1,
     bounds: false,
     zoomDoubleClickSpeed: 1,
     // Zoom suave: factor muy pequeño por evento de scroll
